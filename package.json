@@ -1,0 +1,60 @@
+{
+    "name": "hyperagents",
+    "version": "1.0.0",
+    "description": "Self-improving agent framework powered by LangChain and LangGraph",
+    "author": "Muhammad Umer Farooq <umer@lablnet.com>",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Framework-Island/hyperagents"
+    },
+    "homepage": "https://github.com/Framework-Island/hyperagents",
+    "bugs": {
+        "url": "https://github.com/Framework-Island/hyperagents/issues"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "type": "module",
+    "main": "dist/index.js",
+    "types": "dist/index.d.ts",
+    "scripts": {
+        "build": "tsc",
+        "dev": "tsx watch src/index.ts",
+        "example:bash": "tsx examples/bash/run.ts",
+        "example:paper-review": "tsx examples/paper_review/run.ts",
+        "demo:scoring": "tsx examples/scoring/run.ts",
+        "demo:calculator": "tsx examples/calculator/run.ts",
+    "demo:git-evolution": "tsx examples/git_evolution/run.ts",
+        "typecheck": "tsc --noEmit"
+    },
+    "keywords": [
+        "ai",
+        "agents",
+        "self-improving",
+        "langchain",
+        "langgraph",
+        "evolutionary"
+    ],
+    "license": "MIT",
+    "dependencies": {
+        "@langchain/anthropic": "^1.3.26",
+        "@langchain/community": "^1.1.27",
+        "@langchain/core": "^1.1.39",
+        "@langchain/google-genai": "^2.1.26",
+        "@langchain/langgraph": "^1.2.8",
+        "@langchain/ollama": "^1.2.6",
+        "@langchain/openai": "^1.4.3",
+        "commander": "^13.1.0",
+        "dockerode": "^4.0.0",
+        "dotenv": "^16.4.0",
+        "langchain": "^1.3.1",
+        "simple-git": "^3.27.0",
+        "zod": "^3.24.0"
+    },
+    "devDependencies": {
+        "@types/dockerode": "^3.3.0",
+        "@types/node": "^22.0.0",
+        "tsx": "^4.19.0",
+        "typescript": "^5.7.0"
+    }
+}
