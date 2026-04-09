@@ -20,16 +20,20 @@ The TaskAgent gets better over generations without manual intervention.
 
 ## Quick start
 
+### As an npm package
+
 ```bash
-# Install
+npm install @lablnet/hyperagents
+```
+
+### From source
+
+```bash
+git clone https://github.com/Framework-Island/hyperagents.git
+cd hyperagents
 pnpm install
-
-# Set your API key
-cp .env.example .env
-# Edit .env with your OPENAI_API_KEY
-
-# Run the self-improvement demo (watch the score go from 0.42 to 1.00)
-pnpm demo:scoring
+cp .env.example .env   # Set your OPENAI_API_KEY
+pnpm demo:scoring      # Watch the score go from 0.42 to 1.00
 ```
 
 ## Architecture
@@ -83,7 +87,7 @@ src/
 ### Three evaluator strategies
 
 ```typescript
-import { staticEvaluator, llmJudgeEvaluator, humanFeedbackEvaluator } from "hyperagents";
+import { staticEvaluator, llmJudgeEvaluator, humanFeedbackEvaluator } from "@lablnet/hyperagents";
 
 // 1. Static: exact string match (free, for tasks with one right answer)
 staticEvaluator("42", "42") // => 1.0
@@ -183,7 +187,7 @@ TaskAgent predicts accept/reject for research papers.
 Implement the `Domain` interface:
 
 ```typescript
-import type { Domain, DomainConfig, DomainTask, EvalResult, ReportSummary } from "hyperagents";
+import type { Domain, DomainConfig, DomainTask, EvalResult, ReportSummary } from "@lablnet/hyperagents";
 
 class MyDomain implements Domain {
   config: DomainConfig = {
@@ -215,7 +219,7 @@ class MyDomain implements Domain {
 ## LLM providers
 
 ```typescript
-import { createLLM } from "hyperagents";
+import { createLLM } from "@lablnet/hyperagents";
 
 createLLM({ model: "openai/gpt-4o" })
 createLLM({ model: "anthropic/claude-sonnet-4-5-20250929" })

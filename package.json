@@ -1,5 +1,5 @@
 {
-    "name": "hyperagents",
+    "name": "@lablnet/hyperagents",
     "version": "1.0.0",
     "description": "Self-improving agent framework powered by LangChain and LangGraph",
     "author": "Muhammad Umer Farooq <umer@lablnet.com>",
@@ -17,6 +17,18 @@
     "type": "module",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
+    "files": [
+        "dist",
+        "docs",
+        "README.md",
+        "LICENSE"
+    ],
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js"
+        }
+    },
     "scripts": {
         "build": "tsc",
         "dev": "tsx watch src/index.ts",
@@ -24,8 +36,9 @@
         "example:paper-review": "tsx examples/paper_review/run.ts",
         "demo:scoring": "tsx examples/scoring/run.ts",
         "demo:calculator": "tsx examples/calculator/run.ts",
-    "demo:git-evolution": "tsx examples/git_evolution/run.ts",
-        "typecheck": "tsc --noEmit"
+        "demo:git-evolution": "tsx examples/git_evolution/run.ts",
+        "typecheck": "tsc --noEmit",
+        "prepublishOnly": "pnpm run build"
     },
     "keywords": [
         "ai",
