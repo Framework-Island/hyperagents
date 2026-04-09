@@ -12,8 +12,8 @@ import {
   updateArchive,
   saveGenMetadata,
   getPatchFiles,
-  getScore,
-  isStartingNode,
+  getAvgScore,
+  getBestScore,
   type ArchiveData,
   type ArchiveEntry,
 } from "../utils/archive";
@@ -136,7 +136,7 @@ export async function runGenerateLoop(config: GenerateLoopConfig): Promise<strin
   // Loop through the generations.
   for (let genId = archive.archive.length; genId <= maxGenerations; genId++) {
     // Early termination: check if the best score in the archive is perfect.
-    const bestArchiveScore = getBestArchiveScore(archive, outputDir, domainNames);
+    const bestArchiveScore = getBestScore(archive, outputDir, domainNames);
     if (bestArchiveScore >= 1.0) {
       console.log(`\nPerfect score (${(bestArchiveScore * 100).toFixed(1)}%) achieved. Stopping early.`);
       break;
@@ -176,7 +176,7 @@ export async function runGenerateLoop(config: GenerateLoopConfig): Promise<strin
       await executor.setup(prevPatchFiles);
 
       // Compute the parent's average score across domains.
-      const parentScore = getParentAvgScore(outputDir, parentId, domainNames);
+      const parentScore = getAvgScore(outputDir, parentId, domainNames);
 
       // Run the meta agent with score context and optional prompt file.
       const evalPath = outputDir;
@@ -297,77 +297,4 @@ export async function runGenerateLoop(config: GenerateLoopConfig): Promise<strin
   return outputDir;
 }
 
-/**
- * Get the average score for a parent generation.
- * 
- * @param outputDir - The path of the output directory.
- * @param parentId - The ID of the parent generation.
- * @param domains - The names of the domains.
- * @return {number | null} The average score.
- * 
- * @since v1.0.0
- * @author Muhammad Umer Farooq<umer@lablnet.com>
- */
-function getParentAvgScore(
-  outputDir: string,
-  parentId: string | number,
-  domains: string[]
-): number | null {
-  // If the parent is a starting node, get the scores for the domains.
-  if (isStartingNode(parentId)) {
-    const scores: number[] = [];
-    for (const domain of domains) {
-      const s = getScore(domain, outputDir, parentId, "train");
-      if (s != null) scores.push(s);
-    }
-    return scores.length > 0 ? scores.reduce((a, b) => a + b, 0) / scores.length : null;
-  }
-
-  // Get the scores for the domains.
-  const scores: number[] = [];
-  for (const domain of domains) {
-    const s = getScore(domain, outputDir, parentId, "train");
-    if (s != null) scores.push(s);
-  }
-  // If the scores are not for all domains, return null.
-  if (scores.length !== domains.length) return null;
-  return scores.reduce((a, b) => a + b, 0) / scores.length;
-}
-
-/**
- * Get the best score in the archive.
- * 
- * @param archive - The archive data.
- * @param outputDir - The path of the output directory.
- * @param domains - The names of the domains.
- * @return {number} The best score.
- * 
- * @since v1.0.0
- * @author Muhammad Umer Farooq<umer@lablnet.com>
- */
-function getBestArchiveScore(
-  archive: ArchiveData,
-  outputDir: string,
-  domains: string[]
-): number {
-  // Initialize the best score.
-  let best = -1;
-  for (const genId of archive.archive) {
-    // Get the scores for the domains.
-    const scores: number[] = [];
-    // Loop through the domains.
-    for (const domain of domains) {
-      // Get the score for the domain.
-      const s = getScore(domain, outputDir, genId, "train");
-      if (s != null) scores.push(s);
-    }
-    // If the scores are for all domains, calculate the average score.
-    if (scores.length === domains.length) {
-      const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-      // Update the best score if the average score is better.
-      if (avg > best) best = avg;
-    }
-  }
-  return best;
-}
 

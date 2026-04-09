@@ -1,5 +1,5 @@
 import type { ArchiveData } from "../utils/archive";
-import { getScore, isStartingNode, getGenMetadataKey } from "../utils/archive";
+import { isStartingNode, getGenMetadataKey, getAvgScore } from "../utils/archive";
 
 export type SelectionStrategy = "random" | "latest" | "best" | "score_prop" | "score_child_prop";
 
@@ -83,18 +83,8 @@ function getValidCandidates(
     // If the generation is not a valid parent, continue.
     if (!validParent) continue;
 
-    // Initialize the per domain scores array.
-    const perDomainScores: number[] = [];
-    // Loop through the domains.
-    for (const domain of domains) {
-      const score = getScore(domain, outputDir, genId, "train");
-      if (score != null) {
-        perDomainScores.push(score);
-      }
-    }
-
-    if (perDomainScores.length === domains.length) {
-      const avgScore = perDomainScores.reduce((a, b) => a + b, 0) / perDomainScores.length;
+    const avgScore = getAvgScore(outputDir, genId, domains);
+    if (avgScore != null) {
       candidates.push({ genId, score: avgScore });
     } else if (isStartingNode(genId)) {
       candidates.push({ genId, score: 0 });

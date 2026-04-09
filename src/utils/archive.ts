@@ -239,3 +239,64 @@ export function getScore(
 export function isStartingNode(genId: string | number): boolean {
   return genId === "initial" || genId === 0;
 }
+
+/**
+ * Compute the average score for a single generation across all domains.
+ * 
+ * @param outputDir - The path of the output directory.
+ * @param genId - The ID of the generation.
+ * @param domains - The names of the domains.
+ * @param split - The split to get the score for.
+ * @return {number | null} The average score.
+ * 
+ * @since v1.0.0
+ * @author Muhammad Umer Farooq<umer@lablnet.com>
+ * 
+ */
+export function getAvgScore(
+  outputDir: string,
+  genId: string | number,
+  domains: string[],
+  split: string = "train"
+): number | null {
+  const scores: number[] = [];
+  for (const domain of domains) {
+    const s = getScore(domain, outputDir, genId, split);
+    if (s != null) scores.push(s);
+  }
+
+  if (scores.length === domains.length) {
+    return scores.reduce((a, b) => a + b, 0) / scores.length;
+  }
+  if (isStartingNode(genId) && scores.length > 0) {
+    return scores.reduce((a, b) => a + b, 0) / scores.length;
+  }
+  return null;
+}
+
+/**
+ * Find the best (highest) average score across all generations in the archive.
+ * 
+ * @param archive - The archive data.
+ * @param outputDir - The path of the output directory.
+ * @param domains - The names of the domains.
+ * @param split - The split to get the score for.
+ * @return {number} The best score.
+ * 
+ * @since v1.0.0
+ * @author Muhammad Umer Farooq<umer@lablnet.com>
+ * 
+ */
+export function getBestScore(
+  archive: ArchiveData,
+  outputDir: string,
+  domains: string[],
+  split: string = "train"
+): number {
+  let best = -1;
+  for (const genId of archive.archive) {
+    const avg = getAvgScore(outputDir, genId, domains, split);
+    if (avg != null && avg > best) best = avg;
+  }
+  return best;
+}

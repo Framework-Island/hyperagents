@@ -5,8 +5,8 @@ export { chatWithAgent, type ChatWithAgentOptions, type ChatResult } from "./age
 export { TaskAgent, type TaskInput, type TaskResult } from "./agent/task_agent";
 export { MetaAgent, type MetaAgentForwardOptions } from "./agent/meta_agent";
 
-export { taskAgentPrompt } from "./prompts/task_agent";
-export { metaAgentPrompt, type MetaAgentPromptOptions } from "./prompts/meta_agent";
+export { taskAgentPrompt, TASK_AGENT_PROMPT_TEMPLATE, type TaskAgentPromptOptions } from "./prompts/task_agent";
+export { metaAgentPrompt, META_AGENT_PROMPT_TEMPLATE, type MetaAgentPromptOptions } from "./prompts/meta_agent";
 export { llmJudgePrompt, type LLMJudgePromptOptions } from "./prompts/llm_judge";
 
 export { createBashTool } from "./tools/bash";
@@ -39,6 +39,8 @@ export {
   loadArchive,
   saveArchive,
   updateArchive,
+  getAvgScore,
+  getBestScore,
   type ArchiveData,
   type ArchiveEntry,
 } from "./utils/archive";
