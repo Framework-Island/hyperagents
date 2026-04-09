@@ -9,6 +9,10 @@ export interface AgentOptions {
   llm?: BaseChatModel;
   tools?: StructuredTool[];
   logFile?: string;
+  /** Path to a prompt file. If set, the agent reads its system prompt from this file
+   *  at runtime instead of using the hardcoded default. This enables the MetaAgent
+   *  to edit prompt files in the user's workspace — including its own. */
+  promptFile?: string;
 }
 
 /**

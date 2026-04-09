@@ -20,8 +20,11 @@ export interface TaskResult {
  * so the MetaAgent can easily modify its behavior via code patches.
  */
 export class TaskAgent extends AgentSystem {
+  private promptFile?: string;
+
   constructor(options: AgentOptions = {}) {
     super(options);
+    this.promptFile = options.promptFile;
   }
 
   /**
@@ -34,7 +37,9 @@ export class TaskAgent extends AgentSystem {
    * @author Muhammad Umer Farooq<umer@lablnet.com>
    */
   async forward(inputs: TaskInput): Promise<TaskResult> {
-    const instruction = taskAgentPrompt(inputs);
+    const instruction = this.promptFile
+      ? taskAgentPrompt({ inputs, promptFile: this.promptFile })
+      : taskAgentPrompt(inputs);
     const tools = this.toolRegistry.getAll();
 
     const { response, messages } = await chatWithAgent(instruction, {

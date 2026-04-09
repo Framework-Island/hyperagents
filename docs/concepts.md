@@ -432,6 +432,69 @@ The archive uses JSONL because it's **append-friendly**. Each time a new generat
 
 ---
 
+## Self-Referential Improvement (Prompt Files)
+
+A core concept from the HyperAgents paper is **self-referential self-improvement** — the MetaAgent can modify its own instructions to become a better improver.
+
+### The Problem
+
+When HyperAgents is used as an npm package, all framework code lives in `node_modules/` (immutable). The MetaAgent can't edit its own prompt because it's hardcoded in the package.
+
+### The Solution: Editable Prompt Files
+
+Both agents support loading prompts from **files in the user's workspace** instead of hardcoded defaults:
+
+```typescript
+// Option 1: Pass promptFile directly to agents
+const metaAgent = new MetaAgent({ model, promptFile: "./prompts/meta_agent.txt" });
+const taskAgent = new TaskAgent({ model, promptFile: "./prompts/task_agent.txt" });
+
+// Option 2: Use promptsDir in the generate loop (auto-scaffolds files)
+const config: GenerateLoopConfig = {
+  // ...
+  promptsDir: "./prompts",  // creates meta_agent.txt + task_agent.txt
+};
+```
+
+When `promptsDir` is set, the loop automatically creates default prompt files if they don't exist. The MetaAgent can then edit these files — including its own prompt.
+
+### Template Variables
+
+Prompt files support `{{variable}}` placeholders that are filled at runtime:
+
+**`meta_agent.txt`** variables:
+- `{{repoPath}}` — path to the codebase being modified
+- `{{evalPath}}` — path to evaluation results
+- `{{iterationsContext}}` — "You have N iterations remaining..."
+- `{{scoreContext}}` — "The current agent scores X%..."
+
+**`task_agent.txt`** variables:
+- `{{inputs}}` — JSON-formatted task inputs
+
+### Self-Modification in Action
+
+```
+Gen 1: MetaAgent reads meta_agent.txt
+       "You are an expert AI agent engineer..."
+       → Edits TaskAgent prompt → score 0.6
+       → Also edits meta_agent.txt: adds "Focus on edge cases first"
+
+Gen 2: MetaAgent reads updated meta_agent.txt
+       "You are an expert AI agent engineer... Focus on edge cases first"
+       → Makes better-targeted edits → score 0.85
+
+Gen 3: MetaAgent reads meta_agent.txt again
+       → Refines its own approach further → score 0.95
+```
+
+The MetaAgent gets better at improving things because it can improve its own instructions. This is the "self-referential" part — the improver improves itself.
+
+### Without promptsDir (Default)
+
+If `promptsDir` is not set, prompts use the hardcoded defaults. The system still works — the MetaAgent just can't modify its own prompt. It can still modify everything else in the user's repo (domain code, tools, task prompts stored as separate files, etc.).
+
+---
+
 ## Early Termination
 
 The evolutionary loop includes two smart optimizations:

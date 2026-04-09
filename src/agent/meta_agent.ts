@@ -17,6 +17,8 @@ export type MetaAgentForwardOptions = MetaAgentPromptOptions;
  * and they'll be merged with the framework tools.
  */
 export class MetaAgent extends AgentSystem {
+  private promptFile?: string;
+
   /**
    * Create a new MetaAgent.
    * 
@@ -28,6 +30,7 @@ export class MetaAgent extends AgentSystem {
    */
   constructor(options: AgentOptions = {}) {
     super(options);
+    this.promptFile = options.promptFile;
 
     if (options.tools == null || options.tools.length === 0) {
       this.toolRegistry.registerMany(getFrameworkTools());
@@ -44,7 +47,10 @@ export class MetaAgent extends AgentSystem {
    * @author Muhammad Umer Farooq<umer@lablnet.com>
    */
   async forward(options: MetaAgentForwardOptions): Promise<string> {
-    const instruction = metaAgentPrompt(options);
+    const instruction = metaAgentPrompt({
+      ...options,
+      promptFile: options.promptFile ?? this.promptFile,
+    });
     const tools = this.toolRegistry.getAll();
 
     const { response } = await chatWithAgent(instruction, {

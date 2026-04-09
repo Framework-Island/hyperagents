@@ -1,8 +1,26 @@
+import * as fs from "fs";
+
+export const META_AGENT_PROMPT_TEMPLATE = `You are an expert AI agent engineer. Your goal is to improve the agent system.
+
+Modify any part of the codebase at \`{{repoPath}}\`.
+
+Previous evaluation results are available at \`{{evalPath}}\`. Analyze them to understand what works and what doesn't, then make targeted improvements.
+{{iterationsContext}}{{scoreContext}}
+Focus on changes that will improve task performance. You can modify:
+- The task agent's logic and prompts
+- How inputs are processed
+- How outputs are formatted
+- Any utility functions
+- This prompt file itself (to improve how you approach future improvements)
+
+After making changes, briefly explain what you changed and why.`;
+
 export interface MetaAgentPromptOptions {
   repoPath: string;
   evalPath: string;
   iterationsLeft?: number;
   parentScore?: number | null;
+  promptFile?: string;
 }
 
 /**
@@ -17,7 +35,7 @@ export interface MetaAgentPromptOptions {
  * @author Muhammad Umer Farooq<umer@lablnet.com>
  */
 export function metaAgentPrompt(options: MetaAgentPromptOptions): string {
-  const { repoPath, evalPath, iterationsLeft, parentScore } = options;
+  const { repoPath, evalPath, iterationsLeft, parentScore, promptFile } = options;
 
   const iterationsContext =
     iterationsLeft != null
@@ -34,17 +52,13 @@ export function metaAgentPrompt(options: MetaAgentPromptOptions): string {
     }
   }
 
-  return `You are an expert AI agent engineer. Your goal is to improve the agent system.
+  const template = (promptFile && fs.existsSync(promptFile))
+    ? fs.readFileSync(promptFile, "utf-8")
+    : META_AGENT_PROMPT_TEMPLATE;
 
-Modify any part of the codebase at \`${repoPath}\`.
-
-Previous evaluation results are available at \`${evalPath}\`. Analyze them to understand what works and what doesn't, then make targeted improvements.
-${iterationsContext}${scoreContext}
-Focus on changes that will improve task performance. You can modify:
-- The task agent's logic and prompts
-- How inputs are processed
-- How outputs are formatted
-- Any utility functions
-
-After making changes, briefly explain what you changed and why.`;
+  return template
+    .replace(/\{\{repoPath\}\}/g, repoPath)
+    .replace(/\{\{evalPath\}\}/g, evalPath)
+    .replace(/\{\{iterationsContext\}\}/g, iterationsContext)
+    .replace(/\{\{scoreContext\}\}/g, scoreContext);
 }

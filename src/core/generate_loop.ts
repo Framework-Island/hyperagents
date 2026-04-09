@@ -20,6 +20,8 @@ import {
 import { createExecutor, type Executor } from "../utils/executor";
 import { ensureDir } from "../utils/common";
 import { PATCH_FILENAME } from "../utils/constants";
+import { META_AGENT_PROMPT_TEMPLATE } from "../prompts/meta_agent";
+import { TASK_AGENT_PROMPT_TEMPLATE } from "../prompts/task_agent";
 
 export interface GenerateLoopConfig {
   domains: Domain[];
@@ -38,6 +40,10 @@ export interface GenerateLoopConfig {
   baseCommit?: string;
   imageName?: string;
   skipStagedEval?: boolean;
+  /** Directory containing editable prompt files (meta_agent.txt, task_agent.txt).
+   *  If set, prompts are read from these files at runtime, enabling the MetaAgent
+   *  to modify its own prompt and the TaskAgent's prompt across generations. */
+  promptsDir?: string;
 }
 
 
@@ -76,10 +82,28 @@ export async function runGenerateLoop(config: GenerateLoopConfig): Promise<strin
     evalWorkers = 1,
     baseCommit = "HEAD",
     skipStagedEval = false,
+    promptsDir,
   } = config;
 
   // Ensure the output directory exists.
   ensureDir(outputDir);
+
+  // Resolve prompt file paths (if promptsDir is configured).
+  const metaPromptFile = promptsDir ? path.join(promptsDir, "meta_agent.txt") : undefined;
+  const taskPromptFile = promptsDir ? path.join(promptsDir, "task_agent.txt") : undefined;
+
+  // Scaffold default prompt files if promptsDir is set but files don't exist yet.
+  if (promptsDir) {
+    ensureDir(promptsDir);
+    if (metaPromptFile && !fs.existsSync(metaPromptFile)) {
+      fs.writeFileSync(metaPromptFile, META_AGENT_PROMPT_TEMPLATE);
+      console.log(`Scaffolded editable prompt: ${metaPromptFile}`);
+    }
+    if (taskPromptFile && !fs.existsSync(taskPromptFile)) {
+      fs.writeFileSync(taskPromptFile, TASK_AGENT_PROMPT_TEMPLATE);
+      console.log(`Scaffolded editable prompt: ${taskPromptFile}`);
+    }
+  }
   // Get the names of the domains.
   const domainNames = domains.map((d) => d.config.name);
 
@@ -154,13 +178,14 @@ export async function runGenerateLoop(config: GenerateLoopConfig): Promise<strin
       // Compute the parent's average score across domains.
       const parentScore = getParentAvgScore(outputDir, parentId, domainNames);
 
-      // Run the meta agent with score context.
+      // Run the meta agent with score context and optional prompt file.
       const evalPath = outputDir;
       const result = await metaAgent.forward({
         repoPath: executor.getWorkdir(),
         evalPath,
         iterationsLeft: maxGenerations - genId,
         parentScore,
+        promptFile: metaPromptFile,
       });
 
       parentAgentSuccess = true;
@@ -345,3 +370,4 @@ function getBestArchiveScore(
   }
   return best;
 }
+

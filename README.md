@@ -16,6 +16,8 @@ HyperAgents runs an evolutionary self-improvement loop where a **MetaAgent** rew
 
 The TaskAgent gets better over generations without manual intervention.
 
+> **New here?** Read [docs/concepts.md](docs/concepts.md) for a detailed explanation of every concept with examples.
+
 ## Quick start
 
 ```bash
@@ -33,6 +35,8 @@ pnpm demo:scoring
 ## Architecture
 
 ```
+docs/
+└── concepts.md           Detailed concepts guide (archive, strategies, self-modification, etc.)
 src/
 ├── agent/              Agents
 │   ├── base_agent.ts     Abstract base class
@@ -105,6 +109,25 @@ The archive stores every agent generation. Parent selection picks which ancestor
 - `score_child_prop` -- score-weighted, penalizes over-explored parents (default)
 
 The loop also includes **early termination**: if the best score in the archive reaches 1.0 (100%), the loop stops automatically to avoid wasting compute.
+
+### Self-referential improvement (prompt files)
+
+Both agents can load prompts from **editable files** instead of hardcoded defaults. This enables the MetaAgent to modify its own instructions across generations:
+
+```typescript
+// Per-agent prompt file
+const metaAgent = new MetaAgent({ model, promptFile: "./prompts/meta_agent.txt" });
+
+// Or auto-scaffold via the generate loop
+const config: GenerateLoopConfig = {
+  // ...
+  promptsDir: "./prompts",  // creates meta_agent.txt + task_agent.txt
+};
+```
+
+When `promptsDir` is set, the MetaAgent can edit `meta_agent.txt` to improve how it approaches future generations — the improver improves itself.
+
+See [docs/concepts.md](docs/concepts.md#self-referential-improvement-prompt-files) for full details.
 
 ### Execution modes
 
