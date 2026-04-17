@@ -16,7 +16,7 @@ The design is inspired by [HyperAgents (Meta Research, 2026)](https://github.com
 
 Think of the MetaAgent as the **teacher** updating the textbook, and the TaskAgent as the **student** taking exams with the latest textbook. The archive is the **gradebook plus revision history**.
 
-For a visual overview, start with [Workflows](./workflows.md). For deeper detail, see [Concepts](./concepts.md).
+For narrative and **workflow diagrams** together, see [Basic concepts](./concepts.md).
 
 ## Relation to the research paper
 

@@ -51,7 +51,7 @@ examples/              # Bash, scoring, calculator, factcheck, paper_review, git
 4. **Harness** runs the new TaskAgent on domain tasks; **report** aggregates scores.
 5. A new archive entry is **appended** (JSONL snapshot).
 
-See [Workflows](./workflows.md) for diagrams.
+See [Basic concepts](./concepts.md) for diagrams.
 
 ## Public API surface
 

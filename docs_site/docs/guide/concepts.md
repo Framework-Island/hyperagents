@@ -1,6 +1,6 @@
-# Concepts
+# Basic concepts
 
-Deep dive into HyperAgents: agents, the evolutionary loop, archive, evaluation, and execution. For a shorter visual pass, see [Workflows](./workflows.md).
+Deep dive into HyperAgents: agents, the evolutionary loop, archive, evaluation, and execution. **Workflow diagrams** are included below alongside the narrative so you can read in one place.
 
 ## Overview
 
@@ -8,7 +8,7 @@ HyperAgents combines **evolutionary computation** and **Quality-Diversity (QD)**
 
 ```mermaid
 flowchart TB
-  subgraph loop [Evolutionary loop]
+  subgraph evoLoop [Evolutionary loop]
     Sel[Select parent]
     Imp[MetaAgent improve]
     Ev[Evaluate TaskAgent]
@@ -16,7 +16,77 @@ flowchart TB
     Ev --> Sel
   end
   Arc[(Archive)]
-  loop <--> Arc
+  evoLoop <--> Arc
+```
+
+## Workflow diagrams
+
+### Evolutionary loop (outer)
+
+```mermaid
+flowchart LR
+  subgraph archiveBlock [Archive]
+    Archive[(archive.jsonl)]
+  end
+  Select[selectParent]
+  Setup[setupExecutor]
+  Patches[applyLineagePatches]
+  Meta[runMetaAgent]
+  Eval[runHarnessAndReport]
+  Save[updateArchive]
+  Select --> Setup --> Patches --> Meta --> Eval --> Save
+  Save --> Archive
+  Archive --> Select
+```
+
+### One generation (sequence)
+
+Use participant id **`Main`** (not `Loop`) — Mermaid reserves `loop` for control blocks.
+
+```mermaid
+sequenceDiagram
+  participant Main as generateLoop
+  participant Arch as archive
+  participant Exec as executor
+  participant Meta as metaAgent
+  participant Task as taskAgent
+  participant Dom as domain
+  Main->>Arch: loadArchive and selectParent
+  Main->>Exec: setup with patch chain
+  Main->>Meta: improve from eval feedback
+  Meta->>Exec: write diff and files
+  Main->>Task: forward per task
+  Task->>Dom: prediction
+  Main->>Dom: evaluate prediction
+  Main->>Arch: save scores and patches
+```
+
+### TaskAgent vs MetaAgent (programs)
+
+```mermaid
+flowchart TB
+  subgraph meta [MetaAgent]
+    MIn[repoPath eval results score context]
+    MTools[bash plus editor]
+    MOut[patch and edited files]
+    MIn --> MTools --> MOut
+  end
+  subgraph task [TaskAgent]
+    TIn[task prompt]
+    TTools[optional domain tools]
+    TOut[prediction string]
+    TIn --> TTools --> TOut
+  end
+  meta -->|mutates code prompts tools| task
+```
+
+### Execution mode
+
+```mermaid
+flowchart TD
+  Q[executionMode]
+  Q -->|local| L[LocalExecutor temp dir]
+  Q -->|docker| D[DockerExecutor per generation]
 ```
 
 ## The two agents
@@ -238,6 +308,14 @@ const config: GenerateLoopConfig = {
 ```
 
 With `promptsDir`, the loop can scaffold `meta_agent.txt` and `task_agent.txt`. Template placeholders such as `{{repoPath}}`, `{{evalPath}}`, `{{scoreContext}}` are filled at runtime (see main repo `docs/concepts.md`).
+
+```mermaid
+flowchart LR
+  PD[promptsDir] --> MT[meta_agent.txt]
+  PD --> TT[task_agent.txt]
+  MA[MetaAgent] -->|read and write| MT
+  MA -->|read and write| TT
+```
 
 Without `promptsDir`, built-in templates are used — the MetaAgent still edits **your** domain code and separate files, but not its packaged default prompt text.
 

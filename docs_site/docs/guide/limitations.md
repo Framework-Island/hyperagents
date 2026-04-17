@@ -41,4 +41,4 @@ Evolutionary computation is resource-intensive.
 
 ---
 
-For what the framework *can* do well, see [Introduction](./introduction.md) and [Workflows](./workflows.md).
+For what the framework *can* do well, see [Introduction](./introduction.md) and [Basic concepts](./concepts.md).

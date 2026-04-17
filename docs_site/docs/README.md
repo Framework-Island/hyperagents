@@ -1,35 +1,25 @@
 ---
 home: true
 heroText: HyperAgents
-tagline: Self-improving agents with an evolutionary loop — TypeScript, LangChain, and LangGraph.
+tagline: Evolutionary self-improving agent framework powered by LangChain and LangGraph. ⚠️ EXPERIMENTAL
 actions:
-  - text: Introduction
-    link: /guide/introduction.html
+  - text: Get Started
+    link: /guide/quick-start.html
     type: primary
-  - text: Workflow diagrams
-    link: /guide/workflows.html
+  - text: Basic Concepts
+    link: /guide/concepts.html
     type: secondary
-  - text: API reference
-    link: /reference/api.html
+  - text: Limitations
+    link: /guide/limitations.html
     type: secondary
 features:
-  - title: MetaAgent + TaskAgent
-    details: A teacher agent rewrites the worker agent’s code, prompts, and tools from evaluation feedback.
-  - title: Archive & lineage
-    details: Every generation is stored with scores and patches so you can branch, compare, and ensemble.
-  - title: Pluggable domains
-    details: Implement the Domain interface, pick static, LLM judge, or human feedback evaluators, run locally or in Docker.
-footer: MIT Licensed · Documentation generated with VuePress
+  - title: Self-Improving
+    details: Uses evolutionary algorithms to improve agent logic (prompts, tools, and TypeScript) and keeps an archive of scored generations with branching lineage.
+  - title: Pluggable Architecture
+    details: Works with multiple LLMs via LangChain and agentic flows via LangGraph; plug in domains with static, LLM judge, or human feedback evaluators.
+  - title: Agentic Self-Modification
+    details: MetaAgent edits the program under evaluation using bash and editor tools; run locally or in Docker for safer sandboxing.
+footer: MIT Licensed
 ---
 
-### Quick local docs
-
-From the repository root:
-
-```bash
-cd docs_site && pnpm install && pnpm docs:dev
-```
-
-Package concepts and limitations also live in the main repo under `docs/` (Markdown sources of truth). This site expands them with navigation and diagrams.
-
-See [Limitations](/guide/limitations.html) before relying on the framework in production.
+> **Note:** Inspired by [HyperAgents](https://github.com/facebookresearch/HyperAgents) (Meta Research, 2026).

@@ -8,19 +8,26 @@ export default defineUserConfig({
   title: "HyperAgents",
   description:
     "Self-improving agent framework powered by LangChain and LangGraph — documentation.",
+  head: [
+    ["meta", { name: "theme-color", content: "#3eaf7c" }],
+    [
+      "meta",
+      {
+        name: "keywords",
+        content:
+          "AI, Generative AI, LangChain, LangGraph, Quality Diversity, Evolution, LLM, Agents",
+      },
+    ],
+  ],
   bundler: viteBundler(),
   theme: defaultTheme({
     logo: null,
+    repo: "Framework-Island/hyperagents",
+    docsDir: "docs_site/docs",
     navbar: [
       { text: "Home", link: "/" },
-      { text: "Guide", link: "/guide/introduction.html" },
-      { text: "Workflows", link: "/guide/workflows.html" },
-      { text: "Reference", link: "/reference/api.html" },
-      { text: "Limitations", link: "/guide/limitations.html" },
-      {
-        text: "GitHub",
-        link: "https://github.com/Framework-Island/hyperagents",
-      },
+      { text: "Guide", link: "/guide/concepts.html" },
+      { text: "Examples", link: "/guide/quick-start.html" },
     ],
     sidebar: {
       "/guide/": [
@@ -29,9 +36,8 @@ export default defineUserConfig({
           children: [
             "/guide/introduction.md",
             "/guide/quick-start.md",
-            "/guide/architecture.md",
-            "/guide/workflows.md",
             "/guide/concepts.md",
+            "/guide/architecture.md",
             "/guide/limitations.md",
           ],
         },
