@@ -9,6 +9,7 @@ export default defineUserConfig({
   description:
     "Self-improving agent framework powered by LangChain and LangGraph — documentation.",
   head: [
+    ["link", { rel: "icon", type: "image/png", href: "/logo.png" }],
     ["meta", { name: "theme-color", content: "#3eaf7c" }],
     [
       "meta",
@@ -21,7 +22,7 @@ export default defineUserConfig({
   ],
   bundler: viteBundler(),
   theme: defaultTheme({
-    logo: null,
+    logo: "/logo.png",
     repo: "Framework-Island/hyperagents",
     docsDir: "docs_site/docs",
     navbar: [

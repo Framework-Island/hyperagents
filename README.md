@@ -1,5 +1,9 @@
 # HyperAgents
 
+<p align="center">
+  <img src="docs/logo.png" alt="HyperAgents logo" width="160" height="160">
+</p>
+
 Self-improving agent framework powered by LangChain and LangGraph.
 
 Inspired by [HyperAgents](https://github.com/facebookresearch/HyperAgents) (Meta Research, 2026) -- ported to TypeScript with a generic, pluggable architecture.
