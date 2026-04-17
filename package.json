@@ -38,6 +38,8 @@
         "demo:calculator": "tsx examples/calculator/run.ts",
         "demo:git-evolution": "tsx examples/git_evolution/run.ts",
         "typecheck": "tsc --noEmit",
+        "docs:dev": "pnpm --dir docs_site docs:dev",
+        "docs:build": "pnpm --dir docs_site docs:build",
         "prepublishOnly": "pnpm run build"
     },
     "keywords": [

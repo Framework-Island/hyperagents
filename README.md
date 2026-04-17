@@ -16,7 +16,7 @@ HyperAgents runs an evolutionary self-improvement loop where a **MetaAgent** rew
 
 The TaskAgent gets better over generations without manual intervention.
 
-> **New here?** Read [docs/concepts.md](docs/concepts.md) for a detailed explanation of every concept with examples.
+> **New here?** Read [docs/concepts.md](docs/concepts.md) for a detailed explanation of every concept with examples. For a browsable site with workflow diagrams, run `cd docs_site && pnpm install && pnpm docs:dev` (or `pnpm docs:dev` from the repo root).
 
 ## Quick start
 
